@@ -6,9 +6,12 @@ class SentimentModel:
     def get_model(self):
         GOOGLE_API_KEY = "AIzaSyCy7A0kg3sTiW2Ia5qONSSn1YTf3d89ts0"
 
-        genai.configure(api_key=GOOGLE_API_KEY)
-        model = genai.GenerativeModel("gemini-2.0-flash")
-        return  model
+        try:
+            genai.configure(api_key=GOOGLE_API_KEY)
+            model = genai.GenerativeModel("gemini-2.0-flash")
+            return  model
+        except Exception as e:
+            print(e)
     
 # app
 class SentimentApp(SentimentModel):
@@ -59,13 +62,28 @@ class SentimentApp(SentimentModel):
             exit()
 
     def __sentiment_analysis(self):
-        pass
+        user_text = input("Enter the sentence to evaluate: ")
+        model = super().get_model()
+        response = model.generate_content(f"Give me the sentiment of this sentence: {user_text}")
+        results = response.text
+        print(results)
+        self.secondary_menu()
 
     def __language_translation(self):
-        pass
+        user_text = input("Enter the sentence to translate to english: ")
+        model = super().get_model()
+        response = model.generate_content(f"Give me the english translation of this sentence: {user_text}")
+        results = response.text
+        print(results)
+        self.secondary_menu()
 
-    def language_detection(self):
-        pass
+    def __language_detection(self):
+        user_text = input("Enter the sentence to detect the language of: ")
+        model = super().get_model()
+        response = model.generate_content(f"Give me the language of this sentence: {user_text}")
+        results = response.text
+        print(results)
+        self.secondary_menu()
 
     def __register(self):
         # register
@@ -89,7 +107,7 @@ class SentimentApp(SentimentModel):
         if email in self.__database:
             if self.__database[email][1] == password:
                 print("Login Successful!")
-                # SCF self.sub_menu()
+                self.secondary_menu()
             else:
                 print("Password does not match!")
                 self.main_menu()
